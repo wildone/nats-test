@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USERNAME: postgres
+      POSTGRES_DB: dev-test
+    networks:
+      - main
+    ports:
+      - 5432:5432
+  nats:
+    container_name: nats
+    image: synadia/nats-server:nightly
+    volumes:
+      - ./config/:/etc/nats
+    command: '-c /etc/nats/nats.conf'
+    networks:
+      - main
+    ports:
+      - '4222:4222'
+      - '8222:8222'
+      - '9222:9222'
+  redis:
+    container_name: redis
+    image: redis
+    command: redis-server --requirepass T0pS3cr3t
+    #volumes:
+    #  - /redis-data:/var/lib/redis
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - main
+networks:
+  main:
